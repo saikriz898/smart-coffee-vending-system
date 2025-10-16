@@ -1,0 +1,209 @@
+@startuml Class_Diagram
+!define CLASS class
+
+skinparam class {
+    BackgroundColor LightBlue
+    BorderColor DarkBlue
+    ArrowColor DarkBlue
+}
+
+package "Models" {
+    CLASS User {
+        - userId: int
+        - name: String
+        - email: String
+        - password: String
+        - balance: BigDecimal
+        + User(name, email, password)
+        + getters/setters()
+    }
+
+    CLASS Admin {
+        - adminId: int
+        - username: String
+        - password: String
+        + Admin(username, password)
+        + getters/setters()
+    }
+
+    CLASS CoffeeMenu {
+        - coffeeId: int
+        - name: String
+        - price: BigDecimal
+        - description: String
+        - available: boolean
+        + CoffeeMenu(name, price, description)
+        + getters/setters()
+    }
+
+    CLASS Order {
+        - orderId: int
+        - userId: int
+        - totalAmount: BigDecimal
+        - paymentStatus: PaymentStatus
+        - orderStatus: OrderStatus
+        - orderItems: List<OrderItem>
+        + Order(userId, totalAmount)
+        + getters/setters()
+    }
+
+    CLASS OrderItem {
+        - orderItemId: int
+        - orderId: int
+        - coffeeId: int
+        - quantity: int
+        - sugarLevel: SugarLevel
+        - milkLevel: MilkLevel
+        - size: Size
+        - itemPrice: BigDecimal
+        + OrderItem()
+        + getters/setters()
+    }
+
+    CLASS Payment {
+        - paymentId: int
+        - orderId: int
+        - amount: BigDecimal
+        - paymentType: PaymentType
+        - paymentStatus: PaymentStatus
+        + Payment(orderId, amount, paymentType)
+        + getters/setters()
+    }
+}
+
+package "DAO" {
+    CLASS UserDAO {
+        + createUser(User): boolean
+        + getUserById(int): User
+        + getUserByEmail(String): User
+        + updateUserBalance(int, BigDecimal): boolean
+        + getAllUsers(): List<User>
+    }
+
+    CLASS OrderDAO {
+        + createOrder(Order): boolean
+        + getOrderById(int): Order
+        + getOrdersByUserId(int): List<Order>
+        + updateOrderStatus(int, OrderStatus): boolean
+        + updatePaymentStatus(int, PaymentStatus): boolean
+    }
+
+    CLASS CoffeeMenuDAO {
+        + createCoffeeItem(CoffeeMenu): boolean
+        + getCoffeeById(int): CoffeeMenu
+        + getAllCoffeeItems(): List<CoffeeMenu>
+        + updateCoffeeItem(CoffeeMenu): boolean
+        + updateAvailability(int, boolean): boolean
+    }
+
+    CLASS OrderItemDAO {
+        + createOrderItem(OrderItem): boolean
+        + getOrderItemsByOrderId(int): List<OrderItem>
+        + updateOrderItem(OrderItem): boolean
+    }
+}
+
+package "Service" {
+    CLASS UserService {
+        - userDAO: UserDAO
+        + registerUser(String, String, String): boolean
+        + authenticateUser(String, String): User
+        + addBalance(int, BigDecimal): boolean
+        + deductBalance(int, BigDecimal): boolean
+    }
+
+    CLASS AdminService {
+        - coffeeMenuDAO: CoffeeMenuDAO
+        - orderDAO: OrderDAO
+        - userDAO: UserDAO
+        + authenticateAdmin(String, String): boolean
+        + addCoffeeItem(String, BigDecimal, String): boolean
+        + updateCoffeeItem(CoffeeMenu): boolean
+        + getAllOrders(): List<Order>
+        + getTotalRevenue(): BigDecimal
+    }
+
+    CLASS OrderService {
+        - orderDAO: OrderDAO
+        - coffeeMenuDAO: CoffeeMenuDAO
+        - userService: UserService
+        + calculateItemPrice(int, Size, SugarLevel, MilkLevel): BigDecimal
+        + createOrder(int, List<OrderItem>): Order
+        + processPayment(int, PaymentType): boolean
+    }
+}
+
+package "GUI" {
+    CLASS MainUI {
+        + main(String[]): void
+        - openUserLogin(): void
+        - openAdminLogin(): void
+        - testDatabaseConnection(): void
+    }
+
+    CLASS LoginUI {
+        - userService: UserService
+        - adminService: AdminService
+        - handleLogin(ActionEvent): void
+    }
+
+    CLASS RegisterUI {
+        - userService: UserService
+        - handleRegister(): void
+    }
+
+    CLASS UserDashboardUI {
+        - currentUser: User
+        - userService: UserService
+        - orderService: OrderService
+        - cart: List<OrderItem>
+        - processCheckout(): void
+        - showAddToCartDialog(): void
+    }
+
+    CLASS AdminDashboardUI {
+        - adminService: AdminService
+        - loadMenuData(): void
+        - loadOrdersData(): void
+        - updateStats(): void
+    }
+}
+
+package "Utils" {
+    CLASS DBConnector {
+        + {static} getConnection(): Connection
+        + {static} testConnection(): boolean
+        + {static} closeConnection(Connection): void
+    }
+}
+
+' Relationships
+UserService --> UserDAO
+AdminService --> CoffeeMenuDAO
+AdminService --> OrderDAO
+AdminService --> UserDAO
+OrderService --> OrderDAO
+OrderService --> OrderItemDAO
+OrderService --> CoffeeMenuDAO
+OrderService --> UserService
+
+LoginUI --> UserService
+LoginUI --> AdminService
+RegisterUI --> UserService
+UserDashboardUI --> UserService
+UserDashboardUI --> OrderService
+AdminDashboardUI --> AdminService
+
+UserDAO --> User
+OrderDAO --> Order
+CoffeeMenuDAO --> CoffeeMenu
+OrderItemDAO --> OrderItem
+
+Order --> OrderItem
+Order --> Payment
+
+note top of UserService : "Handles user authentication\nand balance management"
+note top of OrderService : "Manages order creation\nand payment processing"
+note top of AdminService : "Provides admin functionality\nfor menu and order management"
+
+@enduml

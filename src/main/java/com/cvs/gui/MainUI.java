@@ -144,24 +144,18 @@ public class MainUI extends JFrame {
     }
 
     private void openUserLogin() {
-        JOptionPane.showMessageDialog(this, 
-            "User Login will be implemented in Phase 2", 
-            "Coming Soon", 
-            JOptionPane.INFORMATION_MESSAGE);
+        dispose();
+        new LoginUI().setVisible(true);
     }
 
     private void openAdminLogin() {
-        JOptionPane.showMessageDialog(this, 
-            "Admin Login will be implemented in Phase 2", 
-            "Coming Soon", 
-            JOptionPane.INFORMATION_MESSAGE);
+        dispose();
+        new LoginUI().setVisible(true);
     }
 
     private void openRegister() {
-        JOptionPane.showMessageDialog(this, 
-            "User Registration will be implemented in Phase 2", 
-            "Coming Soon", 
-            JOptionPane.INFORMATION_MESSAGE);
+        dispose();
+        new RegisterUI().setVisible(true);
     }
 
     private void testDatabaseConnection() {
