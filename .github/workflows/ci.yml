@@ -1,0 +1,77 @@
+name: Coffee Vending System CI/CD
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: testpassword
+          MYSQL_DATABASE: coffee_vending_system
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up JDK 11
+      uses: actions/setup-java@v3
+      with:
+        java-version: '11'
+        distribution: 'temurin'
+        
+    - name: Cache Maven packages
+      uses: actions/cache@v3
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-m2
+        
+    - name: Wait for MySQL
+      run: |
+        while ! mysqladmin ping -h"127.0.0.1" -P3306 -uroot -ptestpassword --silent; do
+          sleep 1
+        done
+        
+    - name: Setup Database
+      run: |
+        mysql -h127.0.0.1 -P3306 -uroot -ptestpassword coffee_vending_system < database_schema.sql
+        
+    - name: Update Config for CI
+      run: |
+        sed -i 's/db.username=root/db.username=root/' src/main/resources/config.properties
+        sed -i 's/db.password=password/db.password=testpassword/' src/main/resources/config.properties
+        
+    - name: Compile with Maven
+      run: mvn clean compile
+      
+    - name: Run tests
+      run: mvn test
+      
+    - name: Build JAR
+      run: mvn clean package
+      
+    - name: Upload JAR artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: coffee-vending-system-jar
+        path: target/CoffeeVendingSystem-*.jar
+        
+    - name: Generate test report
+      run: mvn surefire-report:report
+      
+    - name: Upload test results
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: test-results
+        path: target/surefire-reports/

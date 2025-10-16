@@ -1,0 +1,99 @@
+@startuml UseCase_Diagram
+!theme plain
+title Coffee Vending System - Use Case Diagram
+
+left to right direction
+
+actor "Customer" as Customer
+actor "Admin" as Admin
+actor "System" as System
+
+rectangle "Coffee Vending System" {
+  ' User Management
+  usecase "Register Account" as UC1
+  usecase "Login" as UC2
+  usecase "Manage Profile" as UC3
+  usecase "Add Balance" as UC4
+
+  ' Order Management
+  usecase "Browse Menu" as UC5
+  usecase "Customize Order" as UC6
+  usecase "Add to Cart" as UC7
+  usecase "Process Payment" as UC8
+  usecase "Generate Receipt" as UC9
+  usecase "View Order History" as UC10
+
+  ' Admin Functions
+  usecase "Admin Login" as UC11
+  usecase "Manage Menu" as UC12
+  usecase "Monitor Orders" as UC13
+  usecase "Update Order Status" as UC14
+  usecase "Manage Inventory" as UC15
+  usecase "Generate Reports" as UC16
+  usecase "View Statistics" as UC17
+
+  ' System Functions
+  usecase "Validate Payment" as UC18
+  usecase "Update Inventory" as UC19
+  usecase "Send Notifications" as UC20
+  usecase "Calculate Pricing" as UC21
+}
+
+' Customer Use Cases
+Customer --> UC1
+Customer --> UC2
+Customer --> UC3
+Customer --> UC4
+Customer --> UC5
+Customer --> UC6
+Customer --> UC7
+Customer --> UC8
+Customer --> UC9
+Customer --> UC10
+
+' Admin Use Cases
+Admin --> UC11
+Admin --> UC12
+Admin --> UC13
+Admin --> UC14
+Admin --> UC15
+Admin --> UC16
+Admin --> UC17
+
+' System Use Cases
+System --> UC18
+System --> UC19
+System --> UC20
+System --> UC21
+
+' Relationships
+UC6 ..> UC21 : <<include>>
+UC8 ..> UC18 : <<include>>
+UC8 ..> UC19 : <<include>>
+UC9 ..> UC20 : <<include>>
+UC12 ..> UC15 : <<extend>>
+UC13 ..> UC14 : <<extend>>
+
+note right of UC1
+  Customer creates new account
+  with email validation and
+  receives $10 welcome bonus
+end note
+
+note right of UC8
+  Supports multiple payment methods:
+  - Wallet (primary)
+  - Cash
+  - Card
+  - UPI
+end note
+
+note right of UC16
+  Generate comprehensive reports:
+  - Daily sales
+  - Weekly analysis
+  - Monthly statistics
+  - User analytics
+end note
+
+@enduml

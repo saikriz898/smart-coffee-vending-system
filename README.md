@@ -4,7 +4,7 @@ A professional Java Swing-based Coffee Vending System with JDBC-enabled MySQL da
 
 ## 🚀 Project Status
 
-**Current Phase: Phase 3 - Advanced GUI + Admin + Reports Complete**
+**Current Phase: Phase 4 - Deployment + SRS + Use Case Complete**
 
 ### ✅ Completed Features
 - ✅ Maven project setup with all dependencies
@@ -25,11 +25,15 @@ A professional Java Swing-based Coffee Vending System with JDBC-enabled MySQL da
 - ✅ Daily/Weekly/Monthly reports
 - ✅ Inventory management with low stock alerts
 - ✅ Real-time order tracking
-- ✅ All diagrams (ER, Class, Sequence, Activity) in PlantUML format
+- ✅ All diagrams (ER, Class, Sequence, Activity, Use Case) in PlantUML format
+- ✅ Runnable JAR with Maven Shade Plugin
+- ✅ GitHub Actions CI/CD workflow
+- ✅ Complete SRS documentation (IEEE 830-1998)
+- ✅ Deployment instructions and architecture documentation
 - ✅ Unit tests for all layers
 
 ### 🔄 Upcoming Phases
-- **Phase 4**: Deployment, SRS documentation, use case diagram  
+- **Phase 5**: Testing & QA  
 - **Phase 3**: Advanced GUI, admin features, sequence & activity diagrams
 - **Phase 4**: Deployment, SRS documentation, use case diagram
 - **Phase 5**: Testing & QA
@@ -149,6 +153,7 @@ mvn test -Dtest=DBConnectorTest
 | 1 | Database + DAO + Models | ✅ Complete |
 | 2 | Service layer + GUI | ✅ Complete |
 | 3 | Advanced GUI + Admin + Reports | ✅ Complete |
+| 4 | Deployment + SRS + Use Case | ✅ Complete |
 | 3 | Advanced GUI + Admin + Reports | ⏳ Planned |
 | 4 | Deployment + SRS + Use Case | ⏳ Planned |
 | 5 | Testing & QA | ⏳ Planned |
