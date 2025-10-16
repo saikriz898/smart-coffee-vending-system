@@ -1,0 +1,3 @@
+@echo off
+echo Starting Coffee Vending System GUI...
+java -cp target\CoffeeVendingSystem-1.0-SNAPSHOT.jar com.cvs.gui.MainUI
