@@ -1,200 +1,107 @@
-# ☕ Coffee Vending System
+# ☕ Java Coffee Vending System
 
-A professional Java Swing-based Coffee Vending System with JDBC-enabled MySQL database integration, featuring real-time updates, admin functionality, and modern GUI design.
+A complete enterprise-grade Coffee Vending System built with Java Swing, MySQL, and Maven. Features modern GUI, secure authentication, real-time inventory management, and comprehensive admin dashboard.
 
-## 🚀 Project Status
+## 🚀 Features
 
-**Current Phase: Phase 4 - Deployment + SRS + Use Case Complete**
+### 👤 User Features
+- **Secure Authentication** - Registration/login with password hashing
+- **Interactive Menu** - Browse coffee options with real-time pricing
+- **Smart Ordering** - Add to cart, customize orders, place orders
+- **Digital Wallet** - Add money, track balance, transaction history
+- **Order Tracking** - Real-time order status and receipt generation
 
-### ✅ Completed Features
-- ✅ Maven project setup with all dependencies
-- ✅ JDBC driver dynamic loading
-- ✅ Database connection testing
-- ✅ Complete database schema with 7 tables
-- ✅ Model classes with proper relationships
-- ✅ DAO layer with CRUD operations
-- ✅ Transaction management
-- ✅ Service layer with business logic
-- ✅ Complete Swing GUI (Login, Register, User/Admin Dashboards)
-- ✅ User authentication with password hashing
-- ✅ Shopping cart and order processing
-- ✅ Admin menu and order management
-- ✅ Real-time balance updates
-- ✅ Advanced admin features (inventory, reports)
-- ✅ Order history and receipt generation
-- ✅ Daily/Weekly/Monthly reports
-- ✅ Inventory management with low stock alerts
-- ✅ Real-time order tracking
-- ✅ All diagrams (ER, Class, Sequence, Activity, Use Case) in PlantUML format
-- ✅ Runnable JAR with Maven Shade Plugin
-- ✅ GitHub Actions CI/CD workflow
-- ✅ Complete SRS documentation (IEEE 830-1998)
-- ✅ Deployment instructions and architecture documentation
-- ✅ Unit tests for all layers
+### 🔧 Admin Features
+- **Inventory Management** - Add/edit/delete coffee items, stock tracking
+- **User Management** - View all users, monitor activities
+- **Order Management** - Track all orders, generate receipts
+- **Analytics Dashboard** - Daily/monthly reports, sales analytics
+- **System Monitoring** - Database health, performance metrics
 
-### 🔄 Upcoming Phases
-- **Phase 5**: Testing & QA  
-- **Phase 3**: Advanced GUI, admin features, sequence & activity diagrams
-- **Phase 4**: Deployment, SRS documentation, use case diagram
-- **Phase 5**: Testing & QA
-- **Phase 6**: Finalization and production deployment
+### 🎨 Technical Features
+- **Modern GUI** - Professional Swing interface with gradients
+- **Database Integration** - MySQL with JDBC, transaction management
+- **Security** - SQL injection prevention, secure authentication
+- **Performance** - Optimized queries, connection pooling
+- **Testing** - Comprehensive unit tests, system validation
 
-## 🏗️ Architecture
+## 🛠️ Tech Stack
 
-```
-CoffeeVendingSystem/
-├── src/main/java/com/cvs/
-│   ├── models/          # Data models (Phase 1)
-│   ├── dao/             # Database access objects (Phase 1)
-│   ├── service/         # Business logic layer (Phase 2)
-│   ├── gui/             # Swing user interface
-│   └── utils/           # Utilities (DBConnector)
-├── src/main/resources/  # Configuration files
-├── src/test/java/       # Unit tests
-└── docs/diagrams/       # UML diagrams (PNG format)
-```
-
-## 🛠️ Technologies
-
-- **Java 11** - Core programming language
+- **Java 11** - Core language
 - **Swing** - GUI framework
-- **JDBC** - Database connectivity
-- **MySQL 8.0** - Database system
-- **Maven** - Build and dependency management
-- **JUnit 5** - Unit testing
-- **SLF4J + Logback** - Logging
-- **Apache Commons Codec** - Password hashing
-
-## 📋 Prerequisites
-
-1. **Java 11 or higher**
-2. **MySQL Server 8.0+**
-3. **Maven 3.6+**
-4. **Git** (for version control)
+- **MySQL 8.0** - Database
+- **Maven** - Build tool
+- **JUnit 5** - Testing
+- **SLF4J** - Logging
 
 ## ⚡ Quick Start
 
-### 1. Database Setup
-```sql
--- Create database (Phase 1 will include full schema)
-CREATE DATABASE coffee_vending_system;
+### Prerequisites
+- Java 11+
+- MySQL 8.0+
+- Maven 3.6+
+
+### Setup
+1. **Clone repository**
+2. **Setup database:**
+   ```sql
+   CREATE DATABASE coffee_vending_system;
+   ```
+3. **Configure database** in `src/main/resources/config.properties`
+4. **Run application:**
+   ```bash
+   mvn clean package
+   ./start-gui.bat
+   ```
+
+## 📊 System Architecture
+
 ```
-
-### 2. Configuration
-Update `src/main/resources/config.properties`:
-```properties
-db.url=jdbc:mysql://localhost:3306/coffee_vending_system?useSSL=false&serverTimezone=UTC
-db.username=your_username
-db.password=your_password
+├── GUI Layer (Swing)
+├── Service Layer (Business Logic)
+├── DAO Layer (Database Access)
+└── MySQL Database
 ```
-
-### 3. Build and Run
-```bash
-# Clone and navigate to project
-cd CoffeeVendingSystem
-
-# Compile project
-mvn clean compile
-
-# Run application
-mvn exec:java -Dexec.mainClass="com.cvs.gui.MainUI"
-
-# Or build runnable JAR
-mvn clean package
-java -jar target/CoffeeVendingSystem-1.0-SNAPSHOT.jar
-```
-
-### 4. Test Database Connection
-- Launch the application
-- Click "🔗 Test Database Connection" button
-- Verify JDBC driver loading and connection success
 
 ## 🧪 Testing
 
 ```bash
-# Run unit tests
+# Run all tests
 mvn test
 
-# Run specific test class
-mvn test -Dtest=DBConnectorTest
+# System validation
+./system-validation.bat
+
+# Performance testing included
 ```
 
-## 📊 Features (Full System)
+## 📱 Screenshots
 
-### 👤 User Features
-- User registration and login
-- Browse coffee menu with prices
-- Customize orders (size, sugar, milk levels)
-- Multiple payment options
-- Real-time order tracking
-- Digital receipt generation
+- Modern login interface
+- Interactive coffee menu
+- Real-time admin dashboard
+- Comprehensive reporting system
 
-### 🔧 Admin Features  
-- Inventory management
-- Menu updates and pricing
-- Order monitoring and reports
-- Daily/weekly/monthly analytics
-- User management
-- System configuration
+## 🏆 Project Highlights
 
-### 🎨 GUI Features
-- Modern responsive design
-- Gradient backgrounds and hover effects
-- Real-time data updates
-- Error handling and validation
-- Multi-panel navigation
-- Professional color scheme
+- **Complete MVC Architecture**
+- **Enterprise-grade Security**
+- **Real-time Data Updates**
+- **Comprehensive Testing Suite**
+- **Production-ready Deployment**
+- **Professional Documentation**
 
-## 📈 Development Phases
+## 📄 Documentation
 
-| Phase | Description | Status |
-|-------|-------------|--------|
-| 0 | Project setup + JDBC initialization | ✅ Complete |
-| 1 | Database + DAO + Models | ✅ Complete |
-| 2 | Service layer + GUI | ✅ Complete |
-| 3 | Advanced GUI + Admin + Reports | ✅ Complete |
-| 4 | Deployment + SRS + Use Case | ✅ Complete |
-| 3 | Advanced GUI + Admin + Reports | ⏳ Planned |
-| 4 | Deployment + SRS + Use Case | ⏳ Planned |
-| 5 | Testing & QA | ⏳ Planned |
-| 6 | Finalization | ⏳ Planned |
+- [User Manual](USER_MANUAL.md)
+- [Admin Guide](ADMIN_GUIDE.md)
+- [System Requirements](SRS_Document.md)
+- [Deployment Guide](PRODUCTION_DEPLOYMENT.md)
 
-## 📋 Git Workflow
+## 🤝 Contributing
 
-Each phase will be committed separately:
-```bash
-git add .
-git commit -m "Phase 0 - Project setup + JDBC initialization"
-git push origin main
-```
+This is an educational project demonstrating enterprise Java development practices.
 
-## 🔧 Configuration
+## 📧 Contact
 
-### Database Configuration
-- **Host**: localhost:3306
-- **Database**: coffee_vending_system  
-- **Driver**: com.mysql.cj.jdbc.Driver
-- **Connection Pool**: HikariCP (Phase 2)
-
-### Application Configuration
-- **GUI Framework**: Java Swing
-- **Architecture**: MVC Pattern
-- **Logging**: SLF4J + Logback
-- **Build Tool**: Maven
-- **Java Version**: 11+
-
-## 📞 Support
-
-For issues or questions:
-1. Check the logs in `logs/` directory
-2. Verify database connection settings
-3. Ensure MySQL server is running
-4. Check Java and Maven versions
-
-## 📄 License
-
-This project is developed for educational purposes as part of Software Engineering coursework.
-
----
-
-**Next Step**: Implement Phase 1 - Database schema, DAO layer, and data models with ER diagram generation.
+Built as part of Software Engineering coursework - demonstrating full-stack Java development with modern practices.
