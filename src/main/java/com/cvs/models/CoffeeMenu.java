@@ -14,7 +14,13 @@ public class CoffeeMenu {
     public CoffeeMenu() {}
 
     public CoffeeMenu(String name, BigDecimal price, String description) {
-        this.name = name;
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("Coffee name cannot be null or empty");
+        }
+        if (price == null || price.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Price must be positive");
+        }
+        this.name = name.trim();
         this.price = price;
         this.description = description;
         this.available = true;
@@ -36,7 +42,12 @@ public class CoffeeMenu {
     public void setName(String name) { this.name = name; }
 
     public BigDecimal getPrice() { return price; }
-    public void setPrice(BigDecimal price) { this.price = price; }
+    public void setPrice(BigDecimal price) { 
+        if (price == null || price.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Price must be positive");
+        }
+        this.price = price; 
+    }
 
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }

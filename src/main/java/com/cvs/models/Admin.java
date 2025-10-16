@@ -11,7 +11,13 @@ public class Admin {
     public Admin() {}
 
     public Admin(String username, String password) {
-        this.username = username;
+        if (username == null || username.trim().isEmpty()) {
+            throw new IllegalArgumentException("Username cannot be null or empty");
+        }
+        if (password == null || password.trim().isEmpty()) {
+            throw new IllegalArgumentException("Password cannot be null or empty");
+        }
+        this.username = username.trim();
         this.password = password;
     }
 
@@ -26,7 +32,12 @@ public class Admin {
     public void setAdminId(int adminId) { this.adminId = adminId; }
 
     public String getUsername() { return username; }
-    public void setUsername(String username) { this.username = username; }
+    public void setUsername(String username) { 
+        if (username == null || username.trim().isEmpty()) {
+            throw new IllegalArgumentException("Username cannot be null or empty");
+        }
+        this.username = username.trim(); 
+    }
 
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }

@@ -19,6 +19,12 @@ public class Order {
     public Order() {}
 
     public Order(int userId, BigDecimal totalAmount) {
+        if (userId <= 0) {
+            throw new IllegalArgumentException("User ID must be positive");
+        }
+        if (totalAmount == null || totalAmount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Total amount must be positive");
+        }
         this.userId = userId;
         this.totalAmount = totalAmount;
         this.paymentStatus = PaymentStatus.PENDING;

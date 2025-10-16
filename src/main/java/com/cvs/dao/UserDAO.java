@@ -14,6 +14,9 @@ public class UserDAO {
     private static final Logger logger = LoggerFactory.getLogger(UserDAO.class);
 
     public boolean createUser(User user) {
+        if (user == null) {
+            throw new IllegalArgumentException("User cannot be null");
+        }
         String sql = "INSERT INTO users (name, email, password, balance) VALUES (?, ?, ?, ?)";
         try (Connection conn = DBConnector.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -39,6 +42,9 @@ public class UserDAO {
     }
 
     public User getUserById(int userId) {
+        if (userId <= 0) {
+            throw new IllegalArgumentException("User ID must be positive");
+        }
         String sql = "SELECT * FROM users WHERE user_id = ?";
         try (Connection conn = DBConnector.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -73,6 +79,12 @@ public class UserDAO {
     }
 
     public boolean updateUserBalance(int userId, BigDecimal newBalance) {
+        if (userId <= 0) {
+            throw new IllegalArgumentException("User ID must be positive");
+        }
+        if (newBalance == null || newBalance.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("Balance cannot be null or negative");
+        }
         String sql = "UPDATE users SET balance = ? WHERE user_id = ?";
         try (Connection conn = DBConnector.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {

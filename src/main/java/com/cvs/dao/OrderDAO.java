@@ -14,6 +14,9 @@ public class OrderDAO {
     private static final Logger logger = LoggerFactory.getLogger(OrderDAO.class);
 
     public boolean createOrder(Order order) {
+        if (order == null) {
+            throw new IllegalArgumentException("Order cannot be null");
+        }
         String sql = "INSERT INTO orders (user_id, total_amount, payment_status, order_status) VALUES (?, ?, ?, ?)";
         Connection conn = null;
         try {

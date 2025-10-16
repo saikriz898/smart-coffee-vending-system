@@ -18,6 +18,15 @@ public class Payment {
     public Payment() {}
 
     public Payment(int orderId, BigDecimal amount, PaymentType paymentType) {
+        if (orderId <= 0) {
+            throw new IllegalArgumentException("Order ID must be positive");
+        }
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Amount must be positive");
+        }
+        if (paymentType == null) {
+            throw new IllegalArgumentException("Payment type cannot be null");
+        }
         this.orderId = orderId;
         this.amount = amount;
         this.paymentType = paymentType;

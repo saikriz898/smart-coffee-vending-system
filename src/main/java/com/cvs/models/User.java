@@ -15,8 +15,17 @@ public class User {
     public User() {}
 
     public User(String name, String email, String password) {
-        this.name = name;
-        this.email = email;
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("Name cannot be null or empty");
+        }
+        if (email == null || email.trim().isEmpty()) {
+            throw new IllegalArgumentException("Email cannot be null or empty");
+        }
+        if (password == null || password.trim().isEmpty()) {
+            throw new IllegalArgumentException("Password cannot be null or empty");
+        }
+        this.name = name.trim();
+        this.email = email.trim();
         this.password = password;
         this.balance = BigDecimal.ZERO;
     }
@@ -43,7 +52,12 @@ public class User {
     public void setPassword(String password) { this.password = password; }
 
     public BigDecimal getBalance() { return balance; }
-    public void setBalance(BigDecimal balance) { this.balance = balance; }
+    public void setBalance(BigDecimal balance) { 
+        if (balance != null && balance.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("Balance cannot be negative");
+        }
+        this.balance = balance; 
+    }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
