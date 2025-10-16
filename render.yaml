@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: coffee-vending-system
+    env: docker
+    dockerfilePath: ./Dockerfile.render
+    envVars:
+      - key: DB_URL
+        value: postgresql://render-postgresql-url
+      - key: DB_USERNAME
+        value: render_user
+      - key: DB_PASSWORD
+        generateValue: true
+      - key: DISPLAY
+        value: ":1"
+    
+  - type: pserv
+    name: coffee-database
+    env: postgresql
+    plan: free
+    databaseName: coffee_vending_system
