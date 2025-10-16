@@ -67,7 +67,9 @@ public class ReceiptUI extends JDialog {
         // Order details
         receipt.append(String.format("Order ID: #%d\n", order.getOrderId()));
         receipt.append(String.format("Date: %s\n", 
-            order.getOrderTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))));
+            order.getOrderTime() != null ? 
+                order.getOrderTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) : 
+                "N/A"));
         receipt.append(String.format("Status: %s\n", order.getOrderStatus()));
         receipt.append("\n");
         
