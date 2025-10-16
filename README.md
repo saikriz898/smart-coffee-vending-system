@@ -154,29 +154,143 @@ smart-coffee-vending-system/
 │   └── 📁 test/java/         # Unit Tests
 ├── 📁 docs/diagrams/         # UML Diagrams
 ├── 📄 database_schema.sql    # Database Setup
-├── 📄 USER_MANUAL.md         # User Guide
-├── 📄 ADMIN_GUIDE.md         # Admin Handbook
-├── 📄 SRS_Document.md        # System Requirements
 ├── 🚀 start-gui.bat          # Quick Launcher
 ├── 🔧 deploy.bat             # Deployment Script
 └── 📄 pom.xml                # Maven Configuration
 ```
 
-## 🎮 Usage Examples
+## 🎮 How to Use
 
-### For Users
-1. **Register/Login** → Secure account creation
-2. **Browse Menu** → View available coffee options
-3. **Place Order** → Add items to cart and checkout
-4. **Track Order** → Real-time order status updates
-5. **Manage Wallet** → Add funds and view transaction history
+### 🚀 Running the Application
 
-### For Admins
-1. **Dashboard Overview** → Sales analytics and system metrics
-2. **Inventory Management** → Add/edit coffee items and pricing
-3. **Order Monitoring** → Track all customer orders
-4. **User Management** → View customer accounts and activities
-5. **Generate Reports** → Daily/monthly business insights
+#### Method 1: Quick Launch (Recommended)
+```bash
+# Navigate to project directory
+cd smart-coffee-vending-system
+
+# Launch GUI application
+./start-gui.bat
+
+# Or use Maven directly
+mvn exec:java -Dexec.mainClass="com.cvs.gui.MainUI"
+```
+
+#### Method 2: Build JAR and Run
+```bash
+# Build runnable JAR
+mvn clean package
+
+# Run the JAR file
+java -jar target/CoffeeVendingSystem-1.0-SNAPSHOT.jar
+```
+
+### 👤 User Guide
+
+#### Registration & Login
+1. **Register New User**:
+   - Click "📝 Register New User"
+   - Fill: Name, Email, Password
+   - Get $10 welcome bonus automatically
+
+2. **User Login**:
+   - Enter email and password
+   - Select "User" option
+   - Access user dashboard
+
+#### Shopping Experience
+1. **Browse Menu**: View available coffee items with prices
+2. **Add to Cart**: Select items with customizations (size, sugar, milk)
+3. **Checkout**: Process orders using wallet balance
+4. **Track Orders**: View real-time order status
+5. **Manage Wallet**: Add funds and view transaction history
+
+### 🔧 Admin Guide
+
+#### Admin Login
+- **Username**: `admin`
+- **Password**: `admin123`
+- Select "Admin" option
+
+#### Admin Features
+1. **📊 Dashboard**: View system statistics and performance metrics
+2. **☕ Menu Management**: Add/edit coffee items and pricing
+3. **📋 Order Management**: Monitor and update order status
+4. **📦 Inventory**: Manage stock levels with low stock alerts
+5. **📈 Reports**: Generate daily/weekly/monthly analytics
+6. **👥 User Management**: View customer accounts and activities
+
+## 🔐 Default Credentials
+
+### Admin Accounts
+- **Primary Admin**: `admin` / `admin123`
+- **Manager**: `manager` / `manager123`
+
+### Test Users (if sample data exists)
+- **User 1**: `john@example.com` / `password123`
+- **User 2**: `jane@example.com` / `password123`
+
+## 🔧 Troubleshooting
+
+### Common Issues & Solutions
+
+#### Database Connection Failed
+```
+❌ Error: "Database connection test: FAILED"
+✅ Solution:
+- Ensure MySQL server is running
+- Check config.properties credentials
+- Verify database exists: coffee_vending_system
+- Run: mysql -u root -p < database_schema.sql
+```
+
+#### Maven Command Not Found
+```
+❌ Error: "'mvn' is not recognized"
+✅ Solution:
+- Install Maven from https://maven.apache.org/download.cgi
+- Add Maven to PATH environment variable
+- Restart command prompt/terminal
+```
+
+#### Java Version Issues
+```
+❌ Error: "java.lang.UnsupportedClassVersionError"
+✅ Solution:
+- Install Java 11 or higher
+- Check version: java -version
+- Update JAVA_HOME environment variable
+```
+
+#### Port Already in Use
+```
+❌ Error: "Port 3306 already in use"
+✅ Solution:
+- Stop other MySQL instances
+- Change port in config.properties
+- Restart MySQL service
+```
+
+## 🎨 UI Navigation
+
+### Main Screen Options
+- **👤 User Login**: Customer access
+- **🔧 Admin Login**: Administrator access  
+- **📝 Register**: Create new user account
+- **🔗 Test DB Connection**: Verify database connectivity
+
+### User Dashboard Features
+- **☕ Menu**: Browse coffee catalog
+- **🛒 Cart**: Manage order items
+- **💳 Checkout**: Process payments
+- **📋 My Orders**: Order history
+- **💰 Add Balance**: Wallet top-up
+
+### Admin Dashboard Features
+- **📊 Dashboard**: System overview
+- **☕ Menu Management**: Item control
+- **📋 Orders**: Order monitoring
+- **📦 Inventory**: Stock management
+- **📈 Reports**: Business analytics
 
 ## 🏆 Key Achievements
 
@@ -189,15 +303,22 @@ smart-coffee-vending-system/
 - ✅ **Modern UI/UX Design** with responsive layouts
 - ✅ **Database Optimization** with efficient queries
 
-## 📚 Documentation
+## 🧪 System Validation
 
-| Document | Description |
-|----------|-------------|
-| [📖 User Manual](USER_MANUAL.md) | Complete guide for end users |
-| [🔧 Admin Guide](ADMIN_GUIDE.md) | Administrator handbook |
-| [📋 System Requirements](SRS_Document.md) | Technical specifications |
-| [🚀 Deployment Guide](PRODUCTION_DEPLOYMENT.md) | Production setup instructions |
-| [🧪 Testing Guide](USER_TESTING_GUIDE.md) | Testing scenarios & validation |
+The system includes comprehensive testing:
+
+### Automated Tests
+- **Unit Tests**: All DAO, Service, and Model classes
+- **Integration Tests**: Database connectivity and transactions
+- **Performance Tests**: Query optimization and response times
+- **Security Tests**: Authentication and SQL injection prevention
+
+### Manual Testing Scenarios
+- **User Registration & Login**: Account creation and authentication
+- **Coffee Ordering**: Menu browsing, cart management, checkout
+- **Wallet Operations**: Balance management and transactions
+- **Admin Functions**: Inventory, reports, user management
+- **System Performance**: Response times and concurrent users
 
 ## 🤝 Contributing
 
@@ -228,6 +349,6 @@ This project is developed for **educational purposes** as part of Software Engin
 
 Made with ❤️ for learning enterprise Java development
 
-[🐛 Report Bug](https://github.com/saikriz898/smart-coffee-vending-system/issues) • [✨ Request Feature](https://github.com/saikriz898/smart-coffee-vending-system/issues) • [📧 Contact](mailto:your-email@example.com)
+[🐛 Report Bug](https://github.com/saikriz898/smart-coffee-vending-system/issues) • [✨ Request Feature](https://github.com/saikriz898/smart-coffee-vending-system/issues)
 
 </div>
