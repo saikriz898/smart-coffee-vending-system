@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  # MySQL Database
+  mysql:
+    image: mysql:8.0
+    container_name: coffee-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: coffee_vending_system
+      MYSQL_USER: coffeeuser
+      MYSQL_PASSWORD: coffeepass
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./database_schema.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - coffee-network
+    restart: unless-stopped
+
+  # Coffee Vending System Application
+  coffee-app:
+    build: .
+    container_name: coffee-vending-app
+    depends_on:
+      - mysql
+    environment:
+      DB_URL: jdbc:mysql://mysql:3306/coffee_vending_system?useSSL=false&serverTimezone=UTC
+      DB_USERNAME: coffeeuser
+      DB_PASSWORD: coffeepass
+    networks:
+      - coffee-network
+    restart: unless-stopped
+    # For GUI applications, you might need X11 forwarding
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+    environment:
+      - DISPLAY=${DISPLAY}
+
+volumes:
+  mysql_data:
+
+networks:
+  coffee-network:
+    driver: bridge
