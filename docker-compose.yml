@@ -1,9 +1,7 @@
-version: '3.8'
-
 services:
   # MySQL Database
   mysql:
-    image: mysql:8.0
+    image: mysql:5.7
     container_name: coffee-mysql
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
@@ -29,14 +27,12 @@ services:
       DB_URL: jdbc:mysql://mysql:3306/coffee_vending_system?useSSL=false&serverTimezone=UTC
       DB_USERNAME: coffeeuser
       DB_PASSWORD: coffeepass
+      DISPLAY: ${DISPLAY:-:0}
     networks:
       - coffee-network
     restart: unless-stopped
-    # For GUI applications, you might need X11 forwarding
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
-    environment:
-      - DISPLAY=${DISPLAY}
 
 volumes:
   mysql_data:

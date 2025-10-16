@@ -83,13 +83,16 @@ A complete **enterprise-grade Coffee Vending System** built with modern Java tec
 
 4. **Build & Run**
    ```bash
-   # Build the project
+   # Option 1: Docker Deployment (Recommended)
+   docker-compose -f docker-compose.simple.yml up -d mysql
+   mvn clean package -DskipTests
+   start-gui.bat
+   
+   # Option 2: Local MySQL
    mvn clean package
+   start-gui.bat
    
-   # Launch GUI application
-   ./start-gui.bat
-   
-   # Or run directly with Maven
+   # Option 3: Maven Direct
    mvn exec:java -Dexec.mainClass="com.cvs.gui.MainUI"
    ```
 
@@ -123,6 +126,23 @@ A complete **enterprise-grade Coffee Vending System** built with modern Java tec
 └─────────────────────────────────────────────────────────┘
 ```
 
+## 🐳 Docker Deployment
+
+```bash
+# Quick Docker setup
+docker-compose -f docker-compose.simple.yml up -d mysql
+
+# Check MySQL status
+docker ps
+
+# Build and run application
+mvn clean package -DskipTests
+start-gui.bat
+
+# Stop services
+docker-compose -f docker-compose.simple.yml down
+```
+
 ## 🧪 Testing & Validation
 
 ```bash
@@ -130,10 +150,7 @@ A complete **enterprise-grade Coffee Vending System** built with modern Java tec
 mvn test
 
 # System validation & health check
-./system-validation.bat
-
-# Performance testing
-mvn test -Dtest=PerformanceTest
+system-validation.bat
 
 # View test coverage report
 mvn jacoco:report
@@ -163,13 +180,24 @@ smart-coffee-vending-system/
 
 ### 🚀 Running the Application
 
-#### Method 1: Quick Launch (Recommended)
+#### Method 1: Docker Setup (Recommended)
 ```bash
 # Navigate to project directory
 cd smart-coffee-vending-system
 
+# Start MySQL container
+docker-compose -f docker-compose.simple.yml up -d mysql
+
+# Build and launch application
+mvn clean package -DskipTests
+start-gui.bat
+```
+
+#### Method 2: Local MySQL
+```bash
+# Ensure MySQL is running locally
 # Launch GUI application
-./start-gui.bat
+start-gui.bat
 
 # Or use Maven directly
 mvn exec:java -Dexec.mainClass="com.cvs.gui.MainUI"
@@ -237,7 +265,8 @@ java -jar target/CoffeeVendingSystem-1.0-SNAPSHOT.jar
 ```
 ❌ Error: "Database connection test: FAILED"
 ✅ Solution:
-- Ensure MySQL server is running
+- Docker: docker-compose -f docker-compose.simple.yml up -d mysql
+- Local: Ensure MySQL server is running on port 3306
 - Check config.properties credentials
 - Verify database exists: coffee_vending_system
 - Run: mysql -u root -p < database_schema.sql
