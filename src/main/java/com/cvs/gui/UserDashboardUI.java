@@ -25,6 +25,7 @@ public class UserDashboardUI extends JFrame {
     private JTable menuTable;
     private List<OrderItem> cart;
     private JLabel cartTotalLabel;
+    private JTextArea cartArea;
 
     public UserDashboardUI(User user) {
         this.currentUser = user;
@@ -129,7 +130,7 @@ public class UserDashboardUI extends JFrame {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBorder(BorderFactory.createTitledBorder("Shopping Cart"));
 
-        JTextArea cartArea = new JTextArea(15, 30);
+        cartArea = new JTextArea(15, 30);
         cartArea.setEditable(false);
         cartArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
         JScrollPane cartScroll = new JScrollPane(cartArea);
@@ -292,9 +293,6 @@ public class UserDashboardUI extends JFrame {
     }
 
     private void updateCartDisplay() {
-        JTextArea cartArea = (JTextArea) ((JScrollPane) ((JPanel) ((JPanel) getContentPane()
-            .getComponent(0)).getComponent(1)).getComponent(1)).getViewport().getView();
-        
         StringBuilder sb = new StringBuilder();
         BigDecimal total = BigDecimal.ZERO;
         
@@ -304,7 +302,9 @@ public class UserDashboardUI extends JFrame {
             total = total.add(item.getItemPrice());
         }
         
-        cartArea.setText(sb.toString());
+        if (cartArea != null) {
+            cartArea.setText(sb.toString());
+        }
         cartTotalLabel.setText("Total: $" + total);
     }
 
@@ -318,6 +318,8 @@ public class UserDashboardUI extends JFrame {
         if (order != null) {
             boolean paymentSuccess = orderService.processPayment(order.getOrderId(), Payment.PaymentType.WALLET);
             if (paymentSuccess) {
+                // Show receipt
+                new ReceiptUI(this, order).setVisible(true);
                 JOptionPane.showMessageDialog(this, 
                     "Order placed successfully!\nOrder ID: " + order.getOrderId(), 
                     "Success", 
@@ -334,6 +336,60 @@ public class UserDashboardUI extends JFrame {
     }
 
     private void showOrderHistory() {
-        JOptionPane.showMessageDialog(this, "Order history feature will be implemented in Phase 3", "Coming Soon", JOptionPane.INFORMATION_MESSAGE);
+        List<Order> userOrders = orderService.getUserOrders(currentUser.getUserId());
+        
+        if (userOrders.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "No orders found", "Order History", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+        // Create order history dialog
+        JDialog historyDialog = new JDialog(this, "Order History", true);
+        historyDialog.setSize(600, 400);
+        historyDialog.setLocationRelativeTo(this);
+
+        String[] columns = {"Order ID", "Amount", "Status", "Payment", "Date"};
+        DefaultTableModel model = new DefaultTableModel(columns, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) { return false; }
+        };
+        
+        JTable ordersTable = new JTable(model);
+        for (Order order : userOrders) {
+            model.addRow(new Object[]{
+                order.getOrderId(),
+                "$" + order.getTotalAmount(),
+                order.getOrderStatus(),
+                order.getPaymentStatus(),
+                order.getOrderTime().format(java.time.format.DateTimeFormatter.ofPattern("MM-dd HH:mm"))
+            });
+        }
+
+        JScrollPane scrollPane = new JScrollPane(ordersTable);
+        historyDialog.add(scrollPane, BorderLayout.CENTER);
+
+        JPanel buttonPanel = new JPanel(new FlowLayout());
+        JButton viewReceiptBtn = new JButton("View Receipt");
+        viewReceiptBtn.addActionListener(e -> {
+            int selectedRow = ordersTable.getSelectedRow();
+            if (selectedRow != -1) {
+                int orderId = (Integer) ordersTable.getValueAt(selectedRow, 0);
+                Order order = orderService.getOrderById(orderId);
+                if (order != null) {
+                    new ReceiptUI(this, order).setVisible(true);
+                }
+            } else {
+                JOptionPane.showMessageDialog(historyDialog, "Please select an order", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+        
+        JButton closeBtn = new JButton("Close");
+        closeBtn.addActionListener(e -> historyDialog.dispose());
+        
+        buttonPanel.add(viewReceiptBtn);
+        buttonPanel.add(closeBtn);
+        historyDialog.add(buttonPanel, BorderLayout.SOUTH);
+
+        historyDialog.setVisible(true);
     }
 }

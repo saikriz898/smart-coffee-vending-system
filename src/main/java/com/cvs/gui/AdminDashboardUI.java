@@ -1,8 +1,11 @@
 package com.cvs.gui;
 
+import com.cvs.dao.IngredientDAO;
 import com.cvs.models.CoffeeMenu;
+import com.cvs.models.Ingredient;
 import com.cvs.models.Order;
 import com.cvs.service.AdminService;
+import com.cvs.service.ReportService;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -15,12 +18,16 @@ public class AdminDashboardUI extends JFrame {
     private static final Color SECONDARY_COLOR = new Color(210, 180, 140);
     
     private final AdminService adminService;
+    private final ReportService reportService;
+    private final IngredientDAO ingredientDAO;
     private JTabbedPane tabbedPane;
-    private JTable menuTable, ordersTable;
+    private JTable menuTable, ordersTable, inventoryTable;
     private JLabel statsLabel;
 
     public AdminDashboardUI() {
         this.adminService = new AdminService();
+        this.reportService = new ReportService();
+        this.ingredientDAO = new IngredientDAO();
         initializeUI();
         loadData();
     }
@@ -42,6 +49,8 @@ public class AdminDashboardUI extends JFrame {
         tabbedPane.addTab("📊 Dashboard", createDashboardPanel());
         tabbedPane.addTab("☕ Menu Management", createMenuPanel());
         tabbedPane.addTab("📋 Orders", createOrdersPanel());
+        tabbedPane.addTab("📦 Inventory", createInventoryPanel());
+        tabbedPane.addTab("📈 Reports", createReportsPanel());
         
         mainPanel.add(tabbedPane, BorderLayout.CENTER);
 
@@ -173,6 +182,7 @@ public class AdminDashboardUI extends JFrame {
     private void loadData() {
         loadMenuData();
         loadOrdersData();
+        loadInventoryData();
         updateStats();
     }
 
@@ -289,6 +299,156 @@ public class AdminDashboardUI extends JFrame {
 
         dialog.add(panel);
         dialog.setVisible(true);
+    }
+
+    private JPanel createInventoryPanel() {
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        // Inventory Table
+        String[] columns = {"ID", "Name", "Quantity", "Unit", "Min Threshold", "Status"};
+        DefaultTableModel inventoryModel = new DefaultTableModel(columns, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) { return false; }
+        };
+        inventoryTable = new JTable(inventoryModel);
+        inventoryTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        
+        JScrollPane scrollPane = new JScrollPane(inventoryTable);
+        panel.add(scrollPane, BorderLayout.CENTER);
+
+        // Buttons
+        JPanel buttonPanel = new JPanel(new FlowLayout());
+        
+        JButton updateBtn = new JButton("Update Quantity");
+        updateBtn.addActionListener(e -> showUpdateQuantityDialog());
+        
+        JButton refreshBtn = new JButton("Refresh");
+        refreshBtn.addActionListener(e -> loadInventoryData());
+        
+        JButton lowStockBtn = new JButton("Show Low Stock");
+        lowStockBtn.addActionListener(e -> showLowStockItems());
+        
+        buttonPanel.add(updateBtn);
+        buttonPanel.add(refreshBtn);
+        buttonPanel.add(lowStockBtn);
+        
+        panel.add(buttonPanel, BorderLayout.SOUTH);
+
+        return panel;
+    }
+
+    private JPanel createReportsPanel() {
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        // Report display area
+        JTextArea reportArea = new JTextArea(20, 50);
+        reportArea.setEditable(false);
+        reportArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        JScrollPane scrollPane = new JScrollPane(reportArea);
+        scrollPane.setBorder(BorderFactory.createTitledBorder("Report Output"));
+        panel.add(scrollPane, BorderLayout.CENTER);
+
+        // Report buttons
+        JPanel buttonPanel = new JPanel(new GridLayout(2, 2, 10, 10));
+        buttonPanel.setBorder(BorderFactory.createTitledBorder("Generate Reports"));
+        
+        JButton dailyBtn = new JButton("Daily Report");
+        dailyBtn.addActionListener(e -> {
+            reportArea.setText(reportService.generateDailyReport());
+        });
+        
+        JButton weeklyBtn = new JButton("Weekly Report");
+        weeklyBtn.addActionListener(e -> {
+            reportArea.setText(reportService.generateWeeklyReport());
+        });
+        
+        JButton monthlyBtn = new JButton("Monthly Report");
+        monthlyBtn.addActionListener(e -> {
+            reportArea.setText(reportService.generateMonthlyReport());
+        });
+        
+        JButton userStatsBtn = new JButton("User Statistics");
+        userStatsBtn.addActionListener(e -> {
+            reportArea.setText(reportService.generateUserStatistics());
+        });
+        
+        buttonPanel.add(dailyBtn);
+        buttonPanel.add(weeklyBtn);
+        buttonPanel.add(monthlyBtn);
+        buttonPanel.add(userStatsBtn);
+        
+        panel.add(buttonPanel, BorderLayout.NORTH);
+
+        return panel;
+    }
+
+    private void loadInventoryData() {
+        DefaultTableModel model = (DefaultTableModel) inventoryTable.getModel();
+        model.setRowCount(0);
+        
+        List<Ingredient> ingredients = ingredientDAO.getAllIngredients();
+        for (Ingredient ingredient : ingredients) {
+            String status = ingredient.isLowStock() ? "LOW STOCK" : "OK";
+            model.addRow(new Object[]{
+                ingredient.getIngredientId(),
+                ingredient.getName(),
+                ingredient.getQuantity(),
+                ingredient.getUnit(),
+                ingredient.getMinThreshold(),
+                status
+            });
+        }
+    }
+
+    private void showUpdateQuantityDialog() {
+        int selectedRow = inventoryTable.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Please select an ingredient", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        int ingredientId = (Integer) inventoryTable.getValueAt(selectedRow, 0);
+        String ingredientName = (String) inventoryTable.getValueAt(selectedRow, 1);
+        int currentQuantity = (Integer) inventoryTable.getValueAt(selectedRow, 2);
+
+        String input = JOptionPane.showInputDialog(this, 
+            String.format("Update quantity for %s\nCurrent: %d", ingredientName, currentQuantity),
+            "Update Quantity", 
+            JOptionPane.QUESTION_MESSAGE);
+
+        if (input != null && !input.trim().isEmpty()) {
+            try {
+                int newQuantity = Integer.parseInt(input.trim());
+                if (newQuantity >= 0) {
+                    if (ingredientDAO.updateIngredientQuantity(ingredientId, newQuantity)) {
+                        JOptionPane.showMessageDialog(this, "Quantity updated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                        loadInventoryData();
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Failed to update quantity", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(this, "Quantity must be non-negative", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(this, "Invalid quantity", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    private void showLowStockItems() {
+        List<Ingredient> lowStockItems = ingredientDAO.getLowStockIngredients();
+        if (lowStockItems.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "No low stock items found!", "Low Stock Alert", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            StringBuilder message = new StringBuilder("⚠️ LOW STOCK ALERT:\n\n");
+            for (Ingredient item : lowStockItems) {
+                message.append(String.format("%s: %d %s (Min: %d)\n", 
+                    item.getName(), item.getQuantity(), item.getUnit(), item.getMinThreshold()));
+            }
+            JOptionPane.showMessageDialog(this, message.toString(), "Low Stock Alert", JOptionPane.WARNING_MESSAGE);
+        }
     }
 
     private void showEditCoffeeDialog() {

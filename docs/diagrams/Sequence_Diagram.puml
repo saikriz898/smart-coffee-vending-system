@@ -1,0 +1,84 @@
+@startuml Sequence_Diagram
+!theme plain
+title Coffee Order & Payment Flow
+
+actor User
+participant "LoginUI" as Login
+participant "UserDashboardUI" as Dashboard
+participant "UserService" as UserSvc
+participant "OrderService" as OrderSvc
+participant "OrderDAO" as OrderDAO
+participant "UserDAO" as UserDAO
+database "MySQL DB" as DB
+
+== Authentication ==
+User -> Login: Enter credentials
+Login -> UserSvc: authenticateUser(email, password)
+UserSvc -> UserDAO: getUserByEmail(email)
+UserDAO -> DB: SELECT * FROM users WHERE email=?
+DB --> UserDAO: User data
+UserDAO --> UserSvc: User object
+UserSvc -> UserSvc: Verify SHA-256 hash
+UserSvc --> Login: Authentication result
+Login -> Dashboard: Open dashboard
+
+== Order Creation ==
+User -> Dashboard: Browse menu & add to cart
+User -> Dashboard: Click checkout
+Dashboard -> OrderSvc: createOrder(userId, orderItems)
+
+OrderSvc -> OrderSvc: Calculate total amount
+loop For each item
+    OrderSvc -> OrderSvc: calculateItemPrice(coffeeId, size, sugar, milk)
+end
+
+OrderSvc -> UserSvc: getUserById(userId)
+UserSvc -> UserDAO: getUserById(userId)
+UserDAO -> DB: SELECT * FROM users WHERE user_id=?
+DB --> UserDAO: User data
+UserDAO --> UserSvc: User object
+UserSvc --> OrderSvc: User with balance
+
+OrderSvc -> OrderSvc: Validate balance >= totalAmount
+
+alt Sufficient Balance
+    OrderSvc -> OrderDAO: createOrder(order)
+    OrderDAO -> DB: BEGIN TRANSACTION
+    OrderDAO -> DB: INSERT INTO orders
+    OrderDAO -> DB: INSERT INTO order_items
+    OrderDAO -> DB: COMMIT
+    DB --> OrderDAO: Order created
+    OrderDAO --> OrderSvc: Order object
+else Insufficient Balance
+    OrderSvc --> Dashboard: Order creation failed
+    Dashboard -> User: Show error message
+end
+
+== Payment Processing ==
+Dashboard -> OrderSvc: processPayment(orderId, WALLET)
+OrderSvc -> UserSvc: deductBalance(userId, amount)
+UserSvc -> UserDAO: updateUserBalance(userId, newBalance)
+UserDAO -> DB: UPDATE users SET balance=?
+DB --> UserDAO: Balance updated
+UserDAO --> UserSvc: Success
+UserSvc --> OrderSvc: Balance deducted
+
+OrderSvc -> OrderDAO: updatePaymentStatus(orderId, COMPLETED)
+OrderDAO -> DB: UPDATE orders SET payment_status='COMPLETED'
+DB --> OrderDAO: Status updated
+OrderDAO --> OrderSvc: Success
+
+OrderSvc -> OrderDAO: updateOrderStatus(orderId, PREPARING)
+OrderDAO -> DB: UPDATE orders SET order_status='PREPARING'
+DB --> OrderDAO: Status updated
+OrderDAO --> OrderSvc: Success
+OrderSvc --> Dashboard: Payment successful
+
+== Receipt Generation ==
+Dashboard -> Dashboard: Generate receipt
+Dashboard -> User: Show ReceiptUI
+Dashboard -> User: Show success message
+Dashboard -> Dashboard: Clear cart
+Dashboard -> Dashboard: Update balance display
+
+@enduml
