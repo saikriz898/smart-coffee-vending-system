@@ -1,0 +1,97 @@
+@startuml ER_Diagram
+!define ENTITY class
+!define RELATIONSHIP -->
+
+skinparam class {
+    BackgroundColor LightBlue
+    BorderColor DarkBlue
+    ArrowColor DarkBlue
+}
+
+ENTITY users {
+    + user_id : INT (PK)
+    --
+    name : VARCHAR(100)
+    email : VARCHAR(150) (UNIQUE)
+    password : VARCHAR(255)
+    balance : DECIMAL(10,2)
+    created_at : TIMESTAMP
+    updated_at : TIMESTAMP
+}
+
+ENTITY admin {
+    + admin_id : INT (PK)
+    --
+    username : VARCHAR(50) (UNIQUE)
+    password : VARCHAR(255)
+    created_at : TIMESTAMP
+}
+
+ENTITY coffee_menu {
+    + coffee_id : INT (PK)
+    --
+    name : VARCHAR(100)
+    price : DECIMAL(8,2)
+    description : TEXT
+    available : BOOLEAN
+    created_at : TIMESTAMP
+}
+
+ENTITY ingredients {
+    + ingredient_id : INT (PK)
+    --
+    name : VARCHAR(100)
+    quantity : INT
+    unit : VARCHAR(20)
+    min_threshold : INT
+    updated_at : TIMESTAMP
+}
+
+ENTITY orders {
+    + order_id : INT (PK)
+    --
+    user_id : INT (FK)
+    total_amount : DECIMAL(10,2)
+    payment_status : ENUM
+    order_status : ENUM
+    order_time : TIMESTAMP
+}
+
+ENTITY order_items {
+    + order_item_id : INT (PK)
+    --
+    order_id : INT (FK)
+    coffee_id : INT (FK)
+    quantity : INT
+    sugar_level : ENUM
+    milk_level : ENUM
+    size : ENUM
+    item_price : DECIMAL(8,2)
+}
+
+ENTITY payments {
+    + payment_id : INT (PK)
+    --
+    order_id : INT (FK)
+    amount : DECIMAL(10,2)
+    payment_type : ENUM
+    payment_status : ENUM
+    transaction_id : VARCHAR(100)
+    payment_time : TIMESTAMP
+}
+
+' Relationships
+users ||--o{ orders : "places"
+orders ||--o{ order_items : "contains"
+coffee_menu ||--o{ order_items : "ordered_as"
+orders ||--o{ payments : "paid_by"
+
+note top of users : "Registered customers\nwith wallet balance"
+note top of admin : "System administrators"
+note top of coffee_menu : "Available coffee items\nwith pricing"
+note top of ingredients : "Inventory management\nwith low stock alerts"
+note top of orders : "Customer orders\nwith status tracking"
+note top of order_items : "Individual items\nwith customizations"
+note top of payments : "Payment transactions\nwith multiple methods"
+
+@enduml
